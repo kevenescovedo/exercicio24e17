@@ -1,0 +1,231 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+
+namespace Exercicio17
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+        class tp_no
+        {
+            public string nome;
+            public string sexo;
+            public int idade;
+            public tp_no prox;
+        }
+
+
+        void Insere(ref tp_no t, int idade, string nome, string sexo )
+        {
+            tp_no no = new tp_no();
+            no.sexo = sexo;
+            no.nome = nome;
+            no.idade = idade;
+            if (t != null)
+                no.prox = t;
+            t = no;
+        }
+        tp_no Remove(ref tp_no t)
+        {
+            tp_no no = null;
+            if (t != null)
+            {
+                no = t;
+                t = t.prox;
+                no.prox = null;
+            }
+            return no;
+        }
+        void Altera(ref tp_no a, int idade, string nome, string sexo)
+        {
+          
+            a.sexo = sexo;
+            a.nome = nome;
+            a.idade = idade;
+          
+        }
+        void Procura(tp_no topo, string nomeProcurado, ref tp_no atual, ref tp_no anterior)
+        {
+            
+            anterior = null;
+            atual = topo;
+           
+            while (atual != null && nomeProcurado.ToLower() != atual.nome.ToLower())
+            {
+               
+                anterior = atual;
+                atual = atual.prox;
+            }
+          
+           
+
+
+        }
+
+
+        tp_no topo = null;
+      tp_no  anterior = null;
+        tp_no atual = null; 
+
+
+
+
+        private void tabCadastrar_Click(object sender, EventArgs e)
+        {
+
+
+        }
+
+
+        private void bt_GravarCadastrar_Click(object sender, EventArgs e)
+        {
+           try
+            {
+                string nome;
+                string sexo;
+                int idade;
+                nome = tb_NomeCadastrar.Text;
+                sexo = cb_SexoCadastrar.Text;
+                idade = Convert.ToInt32(tb_IdadeCadastrar.Text);
+                Insere(ref topo,idade, nome, sexo);
+                tb_NomeCadastrar.Clear();
+                tb_IdadeCadastrar.Clear();
+                cb_SexoCadastrar.Text = "";
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Erro ao Cadastrar, veriifique se os campos estão preenchidos corretamente");
+            }
+
+
+
+
+        }
+
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+
+
+        }
+
+
+        private void bt_Pesquisar_Click(object sender, EventArgs e)
+        {
+            string campoPesquisa = tb_PesquisaNome.Text;
+            Procura(topo, campoPesquisa, ref atual, ref anterior);
+            if(atual == null)
+            {
+                MessageBox.Show("Nome não cadastrado!!!");
+            }
+            else
+            {
+                tb_NomeAlterar.Text = atual.nome;
+                tb_IadadeAlterar.Text = Convert.ToString(atual.idade);
+                cb_SexoAlterar.Text = atual.sexo;
+            }
+        }
+
+
+        private void btAlterarGravar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string nome;
+                string sexo;
+                int idade;
+                nome = tb_NomeAlterar.Text;
+                sexo = cb_SexoAlterar.Text;
+                idade = Convert.ToInt32(tb_IadadeAlterar.Text);
+                tb_NomeAlterar.Clear();
+                tb_IadadeAlterar.Clear();
+                cb_SexoAlterar.Text = "";
+                Altera(ref atual, idade, nome, sexo);
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao Alterar, veriifique se os campos estão preenchidos corretamente");
+            }
+
+
+
+
+        }
+
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string campoPesquisa = tb_PesquisarExcluirNome.Text;
+            Procura(topo, campoPesquisa, ref atual, ref anterior);
+            if (atual == null)
+            {
+                MessageBox.Show("Nome não cadastrado!!!");
+            }
+            else
+            {
+               tb_NomeExcluir.Text = atual.nome;
+               tb_IdadeExcluir.Text = Convert.ToString(atual.idade);
+                cb_SexoExcluir.Text = atual.sexo;
+            }
+        }
+
+
+        private void bt_Excluir_Click(object sender, EventArgs e)
+            
+
+
+        {
+            tb_IdadeExcluir.Clear();
+            tb_NomeExcluir.Clear();
+            cb_SexoExcluir.Text = "";
+            if (atual == topo) // 1o elemento
+            {
+                topo = atual.prox;  // ou topo = topo.prox;
+                atual.prox = null;
+            }
+            else if (atual.prox == null) // Último elemento
+            {
+                anterior.prox = null;
+            }
+            else  // Do meio
+            {
+                anterior.prox = atual.prox;
+                atual.prox = null;
+            }
+        }
+
+
+        private void bt_Mostrar_Click(object sender, EventArgs e)
+        {
+            lb_Resultado.Items.Clear();
+            int i = 1;
+            atual = topo;
+            while (atual != null)
+            {
+                lb_Resultado.Items.Add("Registro: " + i);
+               lb_Resultado.Items.Add("Nome: " + atual.nome);
+                lb_Resultado.Items.Add("Idade: " + atual.idade);
+                lb_Resultado.Items.Add("Sexo: " + atual.sexo);
+                lb_Resultado.Items.Add(" - - - - - - - ");
+
+
+                atual = atual.prox;
+                i++;
+            }
+        }
+    }
+    
+}

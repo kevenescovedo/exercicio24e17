@@ -1,0 +1,246 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+
+namespace Exercicio24
+{
+   
+
+
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+
+        class tp_no
+        {
+            public tp_no esq;
+            public int valor;
+            public tp_no dir;
+        }
+        tp_no raiz = null;
+        void Insere(ref tp_no r, int x)
+        {
+            if (r == null)
+            {
+                r = new tp_no();
+                r.valor = x;
+            }
+            else if (x < r.valor)
+                Insere(ref r.esq, x);
+            else
+                Insere(ref r.dir, x);
+        }
+        tp_no Busca(tp_no r, int x)
+        {
+            if (r == null)
+                return null;
+            else if (x == r.valor)
+                return r;
+            else if (x < r.valor)
+                return Busca(r.esq, x);
+            else
+                return Busca(r.dir, x);
+        }
+        tp_no RetornaMaior(ref tp_no r)
+        {
+            if (r.dir == null)
+            {
+                tp_no p = r;
+                r = r.esq;
+                return p;
+            }
+            else
+                return RetornaMaior(ref r.dir);
+        }
+        void PreOrdem(tp_no r)
+        {
+            if (r != null)
+            {
+                lbExibir.Items.Add(r.valor);
+                PreOrdem(r.esq);
+                PreOrdem(r.dir);
+            }
+        }
+        void PosOrdem(tp_no r)
+        {
+            if (r != null)
+            {
+                PosOrdem(r.esq);
+                PosOrdem(r.dir);
+                lbExibir.Items.Add(r.valor);
+            }
+        }
+        void EmOrdem(tp_no r)
+        {
+            if (r != null)
+            {
+                EmOrdem(r.esq);
+                lbExibir.Items.Add(r.valor);
+                EmOrdem(r.dir);
+            }
+        }
+
+
+
+
+        tp_no Remove(ref tp_no r, int x)
+        {
+            if (r == null)      // elemento nao encontrado
+                return null;
+            else if (x == r.valor)    // elemento encontrado
+            {
+                tp_no p = r;
+                if (r.esq == null)        // nao tem filho esquerdo
+                    r = r.dir;
+                else if (r.dir == null)  // nao tem filho direito
+                    r = r.esq;
+                else                          // tem ambos os filhos
+                {
+                    p = RetornaMaior(ref r.esq);
+                    r.valor = p.valor;
+                }
+                return p;
+            }
+            else if (x < r.valor)
+                return Remove(ref r.esq, x);      // procura na subarvore esquerda
+            else
+                return Remove(ref r.dir, x);       // procura na subarvore direta
+        }
+
+
+        private void btInserir_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int numero;
+                numero = Convert.ToInt32(tbValor.Text);
+                Insere(ref raiz, numero);
+                tbValor.Clear();
+                tbValor.Focus();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Por favor insira um valor númerico valido");
+            }
+        }
+
+
+        private void btPesquisar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int numero;
+                numero = Convert.ToInt32(tbValor.Text);
+               
+                if(raiz != null)
+                {
+                 tp_no valor =  Busca(raiz, numero);
+                    if (valor != null)
+                    {
+                        MessageBox.Show("Valor encontrado com sucesso");
+
+
+
+
+
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("Valor não encontrado !!!!!");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Por favor insira um valor valido, para poder pesquisar");
+                }
+            }
+            catch (Exception ex)
+            {
+
+
+                MessageBox.Show("Por favor insira um valor númerico valido");
+            }
+        }
+
+
+        private void btRemover_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int numero;
+                numero = Convert.ToInt32(tbValor.Text);
+
+
+                if (raiz != null)
+                {
+                    tp_no valor = Remove( ref raiz, numero);
+                    if (valor != null)
+                    {
+                        MessageBox.Show("Valor encontrado e removido com sucesso");
+
+
+
+
+
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("Valor não encontrado  !!!!!");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Por favor insira um valores, para poder excluir");
+                }
+            }
+            catch (Exception ex)
+            {
+
+
+                MessageBox.Show("Por favor insira um valor númerico valido");
+            }
+        }
+
+
+        private void btExibir_Click(object sender, EventArgs e)
+        {
+            if(raiz != null)
+
+
+            {
+                lbExibir.Items.Clear();
+                if (rdOrdem.Checked == true)
+                {
+                    EmOrdem(raiz);
+                }
+                else if (rdPosOrdem.Checked == true)
+                {
+                    PosOrdem(raiz);
+                }
+                else
+                {
+                    PreOrdem(raiz);
+                }
+
+
+            }
+            else
+            {
+                MessageBox.Show("Por favor insira um valores, para poder exibir");
+            }
+        }
+    }
+    }
